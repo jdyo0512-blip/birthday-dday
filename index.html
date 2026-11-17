@@ -211,10 +211,19 @@
     width:126px;
     height:126px;
     margin:-6px -2px 0 0;
-    mix-blend-mode:multiply;
-    -webkit-mask-image:radial-gradient(circle at 50% 50%, #000 74%, transparent 88%);
-    mask-image:radial-gradient(circle at 50% 50%, #000 74%, transparent 88%);
+    border-radius:50%;
+    overflow:hidden;
+    background:#FAF5EA;
+    border:1px solid rgba(255,255,255,.55);
     pointer-events:none;
+  }
+
+  .hero-art img{
+    display:block;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    mix-blend-mode:multiply;
   }
 
   .hero-tag{
@@ -516,9 +525,10 @@
   }
 
   .cal-top{
+    position:relative;
     display:flex;
     align-items:center;
-    justify-content:space-between;
+    justify-content:center;
     gap:6px;
     padding:0 2px 10px;
   }
@@ -531,6 +541,7 @@
     gap:2px;
     font-size:16px;
     color:var(--ink);
+    padding-left:28px;
   }
   .cal-month .y{ font-size:11.5px; color:var(--ink-2); }
 
@@ -551,7 +562,9 @@
   .nav-btn:active{ background:var(--line-soft); }
 
   .today-btn{
-    flex:0 0 auto;
+    position:absolute;
+    right:2px;
+    top:0;
     height:34px;
     padding:0 10px;
     border-radius:11px;
@@ -588,8 +601,8 @@
     align-items:center;
     justify-content:flex-start;
     gap:1px;
-    height:57px;
-    padding:5px 1px 3px;
+    height:52px;
+    padding:4px 1px 3px;
     border-radius:12px;
     border:1px solid transparent;
     background:transparent;
@@ -624,9 +637,9 @@
 
   .cal-tag{
     max-width:100%;
-    padding:2px 3px;
-    border-radius:5px;
-    font-size:8px;
+    padding:2px 4px;
+    border-radius:6px;
+    font-size:8.5px;
     line-height:1.15;
     color:#6F5844;
     background:var(--peach);
@@ -1911,7 +1924,7 @@
     html += '<p class="hero-name">' + esc(p.name) + (p.relation ? '<span class="rel">' + esc(p.relation) + '</span>' : '') + '</p>';
     html += '<p class="hero-sub">' + esc(personSub(p, occ)) + '</p>';
     html += '</div>';
-    html += '<img class="hero-art" src="./assets/hero-character.png" alt="" width="208" height="208">';
+    html += '<span class="hero-art"><img src="./assets/hero-character.png" alt="" width="208" height="208"></span>';
     html += '</div>';
     html += '<div class="hero-dday-row"><div class="hero-dday">';
     if (isToday) {
@@ -2018,12 +2031,12 @@
       tag = '';
       if (list.length) {
         var p0 = list[0].person;
-        tag = '<span class="cal-tag t' + toneOf(p0) + '">' + esc(p0.name) + (list.length > 1 ? ' +' + (list.length - 1) : '') + '</span>';
+        tag = '<span class="cal-tag t' + toneOf(p0) + '">🎂 ' + esc(p0.name) + (list.length > 1 ? ' +' + (list.length - 1) : '') + '</span>';
       }
 
       html += '<button type="button" class="' + cls + '" data-day="' + k + '" aria-label="' + esc((calMonth + 1) + '월 ' + d + '일' + (list.length ? ', 생일: ' + list.map(function (x) { return x.person.name; }).join(', ') : '')) + '">';
       html += '<span class="num">' + d + '</span>';
-      if (list.length) html += '<span class="cal-cake" aria-hidden="true">🎂</span>' + tag;
+      if (list.length) html += tag;
       html += '</button>';
     }
 
