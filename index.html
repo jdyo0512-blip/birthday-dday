@@ -863,11 +863,22 @@
     border-radius:10px;
     border:1px solid var(--line);
     background:var(--line-soft);
+    color:#8A7566;
     font-size:13px;
     line-height:1;
     cursor:pointer;
+    padding:0;
   }
   .ics-btn:active{ background:var(--butter); }
+  .ics-btn svg{
+    width:15px;
+    height:15px;
+    fill:none;
+    stroke:#8A7566;
+    stroke-width:1.7;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+  }
 
   /* ---------------- 플로팅 탭바 ---------------- */
   .tabbar{
@@ -891,8 +902,8 @@
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:4px;
-    padding:9px 4px 7px;
+    gap:5px;
+    padding:9px 4px 6px;
     border:0;
     border-radius:999px;
     background:transparent;
@@ -2175,7 +2186,7 @@
       html += '<span class="badge" data-cat="' + esc(p.category) + '">' + esc(p.category) + '</span></p>';
       html += '<p class="tl-meta">' + esc(p.lunar ? ('음력 ' + p.month + '·' + p.day + ' → 양력 ' + fmtMd(d)) : fmtMdWd(d)) + (p.relation ? ' · ' + esc(p.relation) : '') + '</p></div>';
       html += '<div class="tl-right"><span class="' + chip + '">' + esc(ddayChip(left)) + '</span>';
-      html += '<button type="button" class="ics-btn" data-act="ics" data-id="' + esc(p.id) + '" aria-label="' + esc(p.name) + ' 생일 캘린더에 담기">📅</button>';
+      html += '<button type="button" class="ics-btn" data-act="ics" data-id="' + esc(p.id) + '" aria-label="' + esc(p.name) + ' 생일 캘린더에 담기"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="3"/><path d="M8 3.5v4M16 3.5v4M3.5 10h17"/><path d="M12 13.5v4M10 15.5h4"/></svg></button>';
       html += '</div></div>';
     }
     el.innerHTML = html;
