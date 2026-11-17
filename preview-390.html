@@ -11,5 +11,12 @@
 </head>
 <body>
 <iframe id="frame" src="./index.html" title="생일 디데이 390x844 미리보기"></iframe>
+<script>
+  /* 검증용 미리보기: ?b=값 으로 앱 캐시를 새로 받는다 */
+  (function () {
+    var v = new URLSearchParams(location.search).get('b');
+    if (v) document.getElementById('frame').src = './index.html?b=' + encodeURIComponent(v);
+  })();
+</script>
 </body>
 </html>
