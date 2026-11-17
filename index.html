@@ -223,6 +223,11 @@
 
   .font-opt.on .font-opt-check{ opacity:1; }
 
+  /* 동글체는 속공간이 작아 그대로 두면 글씨가 작아 보인다 → 광학 크기 보정 */
+  .font-opt[data-font="dongle"]{ font-size-adjust:.44; }
+
+  html[data-font="dongle"] body{ font-size-adjust:.44; }
+
   .top-sub{
     margin:8px 0 0;
     font-size:13px;
@@ -1302,10 +1307,10 @@
   /* ---------------- 글씨체 ---------------- */
   var FONT_KEY = 'dday.font.v1';
   var FONTS = [
-    { id: 'jua',    label: '주아체',   family: 'Jua',                   sample: '수아야 생일 축하해 🎂' },
-    { id: 'gaegu',  label: '개구체',   family: 'Gaegu',                 sample: '수아야 생일 축하해 🎂' },
-    { id: 'pdh',    label: '박다현체', family: 'Ownglyph_ParkDaHyun',   sample: '수아야 생일 축하해 🎂' },
-    { id: 'dongle', label: '동글체',   family: 'Dongle',                sample: '수아야 생일 축하해 🎂' }
+    { id: 'jua',    label: '주아체',   family: 'Jua',                 scale: 1,    sample: '수아야 생일 축하해 🎂' },
+    { id: 'gaegu',  label: '개구체',   family: 'Gaegu',               scale: 1,    sample: '수아야 생일 축하해 🎂' },
+    { id: 'pdh',    label: '박다현체', family: 'Ownglyph_ParkDaHyun', scale: 1,    sample: '수아야 생일 축하해 🎂' },
+    { id: 'dongle', label: '동글체',   family: 'Dongle',              scale: 1.45, sample: '수아야 생일 축하해 🎂' }
   ];
   var curFont = 'jua';
 
@@ -1824,6 +1829,9 @@
     var left = daysLeft(occ.date);
     var isToday = left === 0;
     var FONT = fontCss(fontById(curFont));
+    var FS = fontById(curFont).scale || 1;
+    /* 폰트마다 글자 크기가 달라 보이지 않도록 광학 크기를 맞춘다 */
+    function fpx(size) { return Math.round(size * FS) + 'px ' + FONT; }
 
     ctx.clearRect(0, 0, W, H);
 
@@ -1865,7 +1873,7 @@
 
     /* 상단 라벨 */
     ctx.fillStyle = '#B98A96';
-    ctx.font = '40px ' + FONT;
+    ctx.font = fpx(40);
     ctx.fillText('HAPPY  BIRTHDAY', W / 2, 195);
 
     /* 이모지 */
@@ -1876,29 +1884,29 @@
     /* 이름 */
     ctx.textBaseline = 'alphabetic';
     var nameSize = 128;
-    ctx.font = nameSize + 'px ' + FONT;
+    ctx.font = fpx(nameSize);
     while (ctx.measureText(person.name).width > 800 && nameSize > 60) {
       nameSize -= 6;
-      ctx.font = nameSize + 'px ' + FONT;
+      ctx.font = fpx(nameSize);
     }
     ctx.fillStyle = '#4A4048';
     ctx.fillText(person.name, W / 2, 620);
 
     /* 관계 */
     if (person.relation) {
-      ctx.font = '42px ' + FONT;
+      ctx.font = fpx(42);
       ctx.fillStyle = '#A08E9A';
       ctx.fillText(person.relation, W / 2, 678);
     }
 
     /* 날짜 */
-    ctx.font = '38px ' + FONT;
+    ctx.font = fpx(38);
     ctx.fillStyle = '#9C8E98';
     ctx.fillText(fmtFull(occ.date), W / 2, 760);
 
     /* D-day 알약 */
     var pillText = isToday ? '오늘이에요!' : ('D-' + left);
-    ctx.font = '58px ' + FONT;
+    ctx.font = fpx(58);
     var textW = ctx.measureText(pillText).width;
     var pillW = textW + 92;
     var pillH = 96;
@@ -1914,7 +1922,7 @@
     /* 메모 */
     ctx.textBaseline = 'alphabetic';
     if (person.memo) {
-      ctx.font = '34px ' + FONT;
+      ctx.font = fpx(34);
       var lines = wrapLines(ctx, person.memo, 720, 2);
       var boxH = 60 + lines.length * 46;
       var boxY = 985;
@@ -1932,7 +1940,7 @@
     }
 
     /* 하단 */
-    ctx.font = '34px ' + FONT;
+    ctx.font = fpx(34);
     ctx.fillStyle = '#BFAEBA';
     ctx.fillText('🍰  with love  🍰', W / 2, H - 105);
   }
