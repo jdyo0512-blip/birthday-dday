@@ -538,7 +538,7 @@
     display:flex;
     align-items:baseline;
     justify-content:center;
-    gap:2px;
+    gap:4px;
     font-size:16px;
     color:var(--ink);
     white-space:nowrap;
@@ -612,9 +612,9 @@
     align-items:center;
     justify-content:flex-start;
     gap:1px;
-    height:46px;
+    height:54px;
     padding:3px 1px;
-    justify-content:center;
+    justify-content:flex-start;
     border-radius:12px;
     border:1px solid transparent;
     background:transparent;
@@ -626,8 +626,8 @@
   .cal-cell .num{
     display:grid;
     place-items:center;
-    min-width:21px;
-    height:21px;
+    min-width:20px;
+    height:20px;
     font-size:11.5px;
     color:var(--ink);
     border-radius:999px;
@@ -649,10 +649,10 @@
 
   .cal-tag{
     max-width:100%;
-    padding:2px 4px;
-    border-radius:6px;
-    font-size:8.5px;
-    line-height:1.15;
+    padding:1px 3px;
+    border-radius:5px;
+    font-size:8px;
+    line-height:1.3;
     color:#6F5844;
     background:var(--peach);
     overflow:hidden;
@@ -1141,6 +1141,10 @@
     display:flex;
     gap:8px;
     margin-top:16px;
+    position:sticky;
+    bottom:0;
+    padding:8px 0 2px;
+    background:linear-gradient(rgba(255,253,248,0), var(--paper) 26%);
   }
 
   .btn{
