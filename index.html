@@ -2103,7 +2103,7 @@
     var list = (map || {})[calSel] || [];
 
     var html = '<div class="detail-card">';
-    html += '<div class="detail-head"><span class="detail-date">' + esc(fmtMd(date)) + '<small>' + WEEKDAY[date.getDay()] + '요일</small></span>';
+    html += '<div class="detail-head"><span class="detail-date">' + esc(fmtMd(date)) + '<small> ' + WEEKDAY[date.getDay()] + '요일</small></span>';
     html += '<span class="sec-count">' + (list.length ? list.length + '명' : '생일 없음') + '</span></div>';
     if (!list.length) {
       html += '<div class="detail-empty"><img src="./assets/cake-sticker.png" alt=""><span>이 날은 등록된 생일이 없어요</span></div>';
