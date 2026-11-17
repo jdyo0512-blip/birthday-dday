@@ -208,12 +208,12 @@
 
   .hero-art{
     flex:0 0 auto;
-    width:104px;
-    height:104px;
-    margin:-10px -8px -6px 0;
+    width:134px;
+    height:134px;
+    margin:-16px -10px -4px 0;
     mix-blend-mode:multiply;
-    -webkit-mask-image:radial-gradient(circle at 50% 52%, #000 58%, transparent 76%);
-    mask-image:radial-gradient(circle at 50% 52%, #000 58%, transparent 76%);
+    -webkit-mask-image:radial-gradient(circle at 50% 50%, #000 74%, transparent 88%);
+    mask-image:radial-gradient(circle at 50% 50%, #000 74%, transparent 88%);
     pointer-events:none;
   }
 
@@ -421,7 +421,7 @@
   .av.t3{ background:var(--sage); }
   .av.t4{ background:var(--lav); }
 
-  .bday-body{ flex:1 1 auto; min-width:0; }
+  .bday-body{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:1px; }
 
   .bday-name{
     display:flex;
@@ -435,7 +435,8 @@
   .bday-name .nm{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
   .bday-meta{
-    margin:2px 0 0;
+    display:block;
+    margin:0;
     font-size:11px;
     color:var(--ink-2);
     overflow:hidden;
@@ -444,7 +445,8 @@
   }
 
   .bday-memo{
-    margin:3px 0 0;
+    display:block;
+    margin:0;
     font-size:11px;
     color:var(--ink-3);
     overflow:hidden;
@@ -689,7 +691,8 @@
   }
   .detail-row:last-child{ margin-bottom:0; }
   .detail-row .av{ width:34px; height:34px; border-radius:11px; font-size:16px; }
-  .detail-row .rb{ flex:1 1 auto; min-width:0; }
+  .detail-row .rb{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; }
+  .detail-row .rn span.nm{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .detail-row .rn{ font-size:13.5px; color:var(--ink); display:flex; align-items:center; gap:5px; }
   .detail-row .rm{ font-size:10.5px; color:var(--ink-2); margin-top:1px; }
   .detail-row .dday-chip{ font-size:10.5px; padding:6px 7px; min-width:42px; }
@@ -815,7 +818,7 @@
   .tl-date .w{ display:block; font-size:9.5px; color:var(--ink-3); margin-top:2px; }
 
   .tl-body{ flex:1 1 auto; min-width:0; }
-  .tl-name{ display:flex; align-items:center; gap:5px; font-size:14px; color:var(--ink); }
+  .tl-name{ display:flex; align-items:center; gap:5px; font-size:14px; color:var(--ink); margin:0; }
   .tl-name .nm{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .tl-meta{ margin:2px 0 0; font-size:10.5px; color:var(--ink-2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
