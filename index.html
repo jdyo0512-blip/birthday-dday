@@ -2905,6 +2905,19 @@
     ctx.restore();
   }
 
+  /* 네 변을 살짝 지글지글한 선으로 둘러 그린다 */
+  function wobbleEdge(ctx, x, y, w, h, amp, rnd, color, lw) {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = Math.max(0.5, lw);
+    ctx.lineCap = 'round';
+    wobbleLine(ctx, x, y, x + w, y, amp, rnd, 8);
+    wobbleLine(ctx, x + w, y, x + w, y + h, amp, rnd, 8);
+    wobbleLine(ctx, x + w, y + h, x, y + h, amp, rnd, 8);
+    wobbleLine(ctx, x, y + h, x, y, amp, rnd, 8);
+    ctx.restore();
+  }
+
   function wobbleLine(ctx, x1, y1, x2, y2, amp, rnd, segs) {
     segs = segs || 7;
     var dx = x2 - x1;
@@ -2976,6 +2989,7 @@
       ctx.restore();
 
       roughOutline(ctx, t, t, W - 2 * t, H - 2 * t, 10 * U, 'rgba(163,197,133,0.8)', 3.2 * U, rnd);
+      wobbleEdge(ctx, t, t, W - 2 * t, H - 2 * t, 3.2 * U, rnd, 'rgba(163,197,133,0.55)', 2.2 * U);
 
       for (i = 0; i < 18; i++) {
         spot = bandSpot(W, H, t, rnd);
@@ -2998,7 +3012,7 @@
       for (i = 0; i < 110; i++) {
         ctx.beginPath();
         ctx.arc(rnd() * W, rnd() * H, (16 + rnd() * 52) * U, 0, Math.PI * 2);
-        ctx.fillStyle = rnd() > 0.5 ? 'rgba(255,255,255,0.30)' : 'rgba(166,203,232,0.34)';
+        ctx.fillStyle = rnd() > 0.5 ? 'rgba(255,255,255,0.18)' : 'rgba(166,203,232,0.26)';
         ctx.fill();
       }
       ctx.strokeStyle = 'rgba(150,190,222,0.30)';
@@ -3068,7 +3082,7 @@
       ctx.fillStyle = '#FDF8EC';
       ctx.fillRect(0, 0, W, H);
 
-      var sy = 1078 * U;
+      var sy = 950 * U;
       ctx.save();
       ctx.beginPath();
       ctx.rect(0, sy, W, H - sy);
@@ -3096,7 +3110,7 @@
       var flowers = [
         [70, 74, 46], [W - 74, 88, 40], [232, 40, 30], [W * 0.5, 44, 26],
         [38, H * 0.42, 36], [W - 40, H * 0.36, 34],
-        [96, sy - 10, 40], [W - 110, sy + 16, 34], [W * 0.42, sy - 6, 28],
+        [92, sy + 6, 40], [W - 104, sy - 6, 36],
         [64, H - 78, 38], [W - 76, H - 92, 34]
       ];
       for (i = 0; i < flowers.length; i++) {
@@ -3140,10 +3154,10 @@
       ctx.shadowBlur = 26 * U;
       ctx.shadowOffsetY = 8 * U;
       ctx.fillStyle = '#FFFCF2';
-      roundRect(ctx, 98 * U, 98 * U, W - 196 * U, H - 196 * U, 34 * U);
+      roundRect(ctx, 132 * U, 132 * U, W - 264 * U, H - 264 * U, 30 * U);
       ctx.fill();
       ctx.restore();
-      roughOutline(ctx, 98 * U, 98 * U, W - 196 * U, H - 196 * U, 34 * U,
+      roughOutline(ctx, 132 * U, 132 * U, W - 264 * U, H - 264 * U, 30 * U,
         'rgba(208,192,160,0.65)', 2.6 * U, rnd);
       return;
     }
