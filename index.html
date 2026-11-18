@@ -1705,6 +1705,10 @@
     { id: 'sua',  name: '수아', relation: '딸', category: '가족', emoji: '🐰', sticker: 'bunny', cardBg: 'cream', month: 9, day: 19, lunar: false, memo: '우리 수아 생일 🎂' },
     { id: 'dayeong', name: '다영', relation: '나', category: '가족', emoji: '🎂', sticker: 'cake', cardBg: 'cream', month: 5, day: 12, lunar: false, memo: '내 생일 선물 위시리스트 적기' },
 
+    /* 시댁 부모님 생신 2건 — 음력 · 매년 반복 */
+    { id: 'inlaw-mom', name: '시엄마', relation: '시어머니', category: '가족', emoji: '🧁', sticker: 'cupcake', cardBg: 'gingham',       month: 5,  day: 21, lunar: true, memo: '' },
+    { id: 'inlaw-dad', name: '시아빠', relation: '시아버지', category: '가족', emoji: '🧸', sticker: 'bear',    cardBg: 'butter-stripe', month: 12, day: 5,  lunar: true, memo: '' },
+
     /* 네이버 캘린더(jdyo0512)에서 옮긴 생일 17건 — 전부 양력 · 매년 반복 */
     { id: 'nv-ran',         name: '란',       relation: '친구', category: '친구', emoji: '🐣', sticker: 'chick',    cardBg: 'cream',         month: 4,  day: 20, lunar: false, memo: '' },
     { id: 'nv-hyeongjeong', name: '현정',     relation: '친구', category: '친구', emoji: '🧸', sticker: 'bear',     cardBg: 'green-star',    month: 4,  day: 23, lunar: false, memo: '' },
@@ -1725,11 +1729,16 @@
     { id: 'nv-idasaengil',  name: '이다생일', relation: '친구', category: '친구', emoji: '🐶', sticker: 'puppy',    cardBg: 'daisy',         month: 11, day: 26, lunar: false, memo: '' }
   ];
 
-  /* DEFAULT_PEOPLE 중에서 '한 번만 채워 넣을' 항목 (네이버 캘린더 17건) */
-  var SEED_KEY = 'dday.seed.naver17.v1';
-  var SEED_IDS = ['nv-ran', 'nv-hyeongjeong', 'nv-saerom', 'nv-eunbi', 'nv-hyeonjin', 'nv-amso',
-    'nv-suyeong', 'nv-seolhui', 'nv-dain', 'nv-bora', 'nv-geonnyeong', 'nv-minju', 'nv-yunhwa',
-    'nv-mingji', 'nv-jinseon', 'nv-yumi', 'nv-idasaengil'];
+  /* DEFAULT_PEOPLE 중에서 '한 번만 채워 넣을' 항목 묶음
+     — 묶음마다 플래그를 따로 두어, 나중에 추가한 항목도 기존 사용자에게 한 번은 보인다. */
+  var SEED_GROUPS = [
+    { key: 'dday.seed.naver17.v1',
+      ids: ['nv-ran', 'nv-hyeongjeong', 'nv-saerom', 'nv-eunbi', 'nv-hyeonjin', 'nv-amso',
+            'nv-suyeong', 'nv-seolhui', 'nv-dain', 'nv-bora', 'nv-geonnyeong', 'nv-minju',
+            'nv-yunhwa', 'nv-mingji', 'nv-jinseon', 'nv-yumi', 'nv-idasaengil'] },
+    { key: 'dday.seed.inlaws2.v1',
+      ids: ['inlaw-mom', 'inlaw-dad'] }
+  ];
 
   /* ---------------- 작은 도우미 ---------------- */
   function $(id) { return document.getElementById(id); }
@@ -1989,11 +1998,11 @@
   }
 
   /* 이미 저장된 생일이 있는 사용자에게도 새 기본 생일이 한 번은 보이도록,
-     저장된 목록에 없는 SEED_IDS 항목만 1회 합친다.
-     (사용자가 나중에 지운 항목이 되살아나지 않도록 플래그를 남긴다.) */
-  function seedNewDefaults() {
+     저장된 목록에 없는 시드 항목만 1회 합친다.
+     (사용자가 나중에 지운 항목이 되살아나지 않도록 묶음마다 플래그를 남긴다.) */
+  function seedGroup(group) {
     var already = false;
-    try { already = localStorage.getItem(SEED_KEY) === '1'; } catch (e) { already = false; }
+    try { already = localStorage.getItem(group.key) === '1'; } catch (e) { already = false; }
     if (already) return 0;
 
     var byId = {}, byKey = {}, i;
@@ -2006,7 +2015,7 @@
     var added = 0;
     for (i = 0; i < defs.length; i++) {
       var p = defs[i];
-      if (SEED_IDS.indexOf(p.id) === -1) continue;
+      if (group.ids.indexOf(p.id) === -1) continue;
       var key = p.name + '|' + p.month + '|' + p.day + '|' + (p.lunar ? 'L' : 'S');
       if (byId[p.id] || byKey[key]) continue;
       byId[p.id] = true;
@@ -2015,8 +2024,14 @@
       added++;
     }
 
-    try { localStorage.setItem(SEED_KEY, '1'); } catch (e) {}
+    try { localStorage.setItem(group.key, '1'); } catch (e) {}
     if (added) saveAll();
+    return added;
+  }
+
+  function seedNewDefaults() {
+    var added = 0;
+    for (var i = 0; i < SEED_GROUPS.length; i++) added += seedGroup(SEED_GROUPS[i]);
     return added;
   }
 
