@@ -2635,6 +2635,83 @@
     return lines;
   }
 
+  /* 스티커의 종이색 바탕을 잘라 투명하게 만든다 (가장자리에서 번지는 채우기) */
+  function cutStickerArt(img) {
+    if (!img) return null;
+    if (img.__cut) return img.__cut;
+    if (img.__cutFail) return null;
+    try {
+      var w = img.naturalWidth || img.width;
+      var h = img.naturalHeight || img.height;
+      if (!w || !h || w * h > 1400 * 1400) { img.__cutFail = true; return null; }
+
+      var cv = document.createElement('canvas');
+      cv.width = w;
+      cv.height = h;
+      var g = cv.getContext('2d');
+      if (!g) { img.__cutFail = true; return null; }
+      g.drawImage(img, 0, 0, w, h);
+
+      var imgData = g.getImageData(0, 0, w, h);
+      var px = imgData.data;
+      var si = (2 * w + 2) * 4;
+      var br = px[si], bgc = px[si + 1], bbc = px[si + 2];
+      var T1 = 6, T2 = 30;
+      var n = w * h;
+      var visited = new Uint8Array(n);
+      var stack = [];
+      var x, y, i, p;
+
+      function gap(idx) {
+        var q = idx * 4;
+        var d1 = Math.abs(px[q] - br);
+        var d2 = Math.abs(px[q + 1] - bgc);
+        var d3 = Math.abs(px[q + 2] - bbc);
+        var m = d1 > d2 ? d1 : d2;
+        return d3 > m ? d3 : m;
+      }
+
+      function reach(idx) {
+        if (visited[idx]) return;
+        if (gap(idx) > T2) return;
+        visited[idx] = 1;
+        stack.push(idx);
+      }
+
+      for (x = 0; x < w; x++) {
+        reach(x);
+        reach((h - 1) * w + x);
+      }
+      for (y = 0; y < h; y++) {
+        reach(y * w);
+        reach(y * w + w - 1);
+      }
+      while (stack.length) {
+        var idx = stack.pop();
+        var cx = idx % w;
+        if (cx > 0) reach(idx - 1);
+        if (cx < w - 1) reach(idx + 1);
+        if (idx >= w) reach(idx - w);
+        if (idx < n - w) reach(idx + w);
+      }
+
+      for (i = 0; i < n; i++) {
+        if (!visited[i]) continue;
+        var m2 = gap(i);
+        var a = m2 <= T1 ? 0 : Math.min(255, Math.round(255 * (m2 - T1) / (T2 - T1)));
+        p = i * 4 + 3;
+        if (a < px[p]) px[p] = a;
+      }
+
+      g.putImageData(imgData, 0, 0);
+      img.__cut = cv;
+      return cv;
+    } catch (e) {
+      img.__cutFail = true;
+      return null;
+    }
+  }
+
   function drawCard(canvas, person, occ, art) {
     var W = 1080;
     var H = 1350;
@@ -2689,12 +2766,24 @@
     /* 캐릭터 스티커 (오일파스텔 손그림) */
     var artDrawn = false;
     if (art) {
+      var cut = cutStickerArt(art);
       try {
-        ctx.save();
-        /* 스티커의 종이색 배경이 카드 배경보다 밝아서 darken이면 사라진다 */
-        ctx.globalCompositeOperation = 'darken';
-        ctx.drawImage(art, W / 2 - 184, 236, 368, 368);
-        ctx.restore();
+        if (cut) {
+          /* 히어로 카드처럼 연한 버터색 원판 위에 얹는다 */
+          ctx.save();
+          ctx.fillStyle = 'rgba(255,243,201,0.9)';
+          ctx.beginPath();
+          ctx.arc(W / 2, 420, 206, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+          ctx.drawImage(cut, W / 2 - 184, 236, 368, 368);
+        } else {
+          ctx.save();
+          /* 투명하게 자르지 못했으면 종이색이 가장자리에 드러나지 않게 darken */
+          ctx.globalCompositeOperation = 'darken';
+          ctx.drawImage(art, W / 2 - 184, 236, 368, 368);
+          ctx.restore();
+        }
         artDrawn = true;
       } catch (e) {
         try { ctx.restore(); } catch (e2) {}
