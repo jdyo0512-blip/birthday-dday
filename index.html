@@ -2691,7 +2691,8 @@
     if (art) {
       try {
         ctx.save();
-        ctx.globalCompositeOperation = 'multiply';
+        /* 스티커의 종이색 배경이 카드 배경보다 밝아서 darken이면 사라진다 */
+        ctx.globalCompositeOperation = 'darken';
         ctx.drawImage(art, W / 2 - 184, 236, 368, 368);
         ctx.restore();
         artDrawn = true;
