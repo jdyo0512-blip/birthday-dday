@@ -3652,15 +3652,15 @@
     if (!p) return;
     var occ = nextOccurrence(p, new Date());
     if (!occ) { toast('생일 날짜를 계산하지 못했어요 😢'); return; }
-    var text = buildICS([{ person: p, date: occ.date }], '생일 디데이 · ' + p.name);
+    var text = buildICS([{ person: p, date: occ.date }], '가족 생일 · ' + p.name);
     downloadICS(text, p.name + '-생일.ics');
   }
 
   function exportUpcoming() {
     var items = upcomingItems();
     if (!items.length) { toast('담을 생일이 없어요 🎈'); return; }
-    var text = buildICS(items, '생일 디데이');
-    downloadICS(text, '생일-디데이.ics');
+    var text = buildICS(items, '가족 생일');
+    downloadICS(text, '가족-생일.ics');
   }
 
   /* ---------------- 폭죽 ---------------- */
