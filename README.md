@@ -60,3 +60,12 @@
 - 생일 정보는 서버로 가지 않고 브라우저 `localStorage`에만 저장됩니다(기존 `dday.birthdays.v1` 데이터 호환).
 
 GitHub Pages: https://jdyo0512-blip.github.io/birthday-dday/
+
+## 가족 전용 페이지 `/family/`
+
+남편 동재 님 쪽에서 쓰는 가족 전용 화면이에요. 위 24명 버전과 화면·기능은 같고, 데이터만 우리 가족 7명으로 줄였습니다.
+
+- 주소: https://jdyo0512-blip.github.io/birthday-dday/family/ — 쿼리스트링이 아니라 별도 경로라서, 아이폰 '홈 화면에 추가'로 열어도 늘 가족 화면으로 뜹니다(홈 화면 이름 `가족 생일`).
+- 기본 7명: 수아 9/19 · 다영 5/12 · 동재 7/9(양력) / 엄마 음력 3/11 · 아빠 음력 11/8 · 시엄마 음력 5/21 · 시아빠 음력 12/5.
+- 친구 17명과 과거 시드 병합(`dday.seed.*`)은 들어 있지 않고, 저장 키도 `dday.family.birthdays.v1` · `dday.family.font.v1`로 분리돼 메인 24명 목록과 섞이지 않아요. 이미지 경로는 `../assets/...`를 씁니다.
+- 메인 `index.html`(24명)은 그대로예요.
