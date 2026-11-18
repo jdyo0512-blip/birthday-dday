@@ -1709,6 +1709,11 @@
     { id: 'inlaw-mom', name: '시엄마', relation: '시어머니', category: '가족', emoji: '🧁', sticker: 'cupcake', cardBg: 'gingham',       month: 5,  day: 21, lunar: true, memo: '' },
     { id: 'inlaw-dad', name: '시아빠', relation: '시아버지', category: '가족', emoji: '🧸', sticker: 'bear',    cardBg: 'butter-stripe', month: 12, day: 5,  lunar: true, memo: '' },
 
+    /* 친정 부모님·남편 생일 3건 — 양력 · 매년 반복 */
+    { id: 'mom',     name: '엄마', relation: '어머니', category: '가족', emoji: '🐰', sticker: 'bunny', cardBg: 'daisy',      month: 3,  day: 11, lunar: false, memo: '' },
+    { id: 'dad',     name: '아빠', relation: '아버지', category: '가족', emoji: '🧸', sticker: 'bear',  cardBg: 'blue-star',  month: 11, day: 8,  lunar: false, memo: '' },
+    { id: 'dongjae', name: '동재', relation: '남편',   category: '가족', emoji: '🐶', sticker: 'puppy', cardBg: 'green-star', month: 7,  day: 9,  lunar: false, memo: '' },
+
     /* 네이버 캘린더(jdyo0512)에서 옮긴 생일 17건 — 전부 양력 · 매년 반복 */
     { id: 'nv-ran',         name: '란',       relation: '친구', category: '친구', emoji: '🐣', sticker: 'chick',    cardBg: 'cream',         month: 4,  day: 20, lunar: false, memo: '' },
     { id: 'nv-hyeongjeong', name: '현정',     relation: '친구', category: '친구', emoji: '🧸', sticker: 'bear',     cardBg: 'green-star',    month: 4,  day: 23, lunar: false, memo: '' },
@@ -1737,7 +1742,9 @@
             'nv-suyeong', 'nv-seolhui', 'nv-dain', 'nv-bora', 'nv-geonnyeong', 'nv-minju',
             'nv-yunhwa', 'nv-mingji', 'nv-jinseon', 'nv-yumi', 'nv-idasaengil'] },
     { key: 'dday.seed.inlaws2.v1',
-      ids: ['inlaw-mom', 'inlaw-dad'] }
+      ids: ['inlaw-mom', 'inlaw-dad'] },
+    { key: 'dday.seed.family3.v1',
+      ids: ['mom', 'dad', 'dongjae'] }
   ];
 
   /* ---------------- 작은 도우미 ---------------- */
