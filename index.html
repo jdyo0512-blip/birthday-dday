@@ -423,12 +423,20 @@
     border-radius:14px;
     font-size:20px;
     line-height:1;
+    overflow:hidden;
   }
   .av.t1{ background:var(--butter); }
   .av.t2{ background:var(--peach); }
   .av.t3{ background:var(--sage); }
   .av.t4{ background:var(--lav); }
-
+  .av img{
+    display:block;
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    mix-blend-mode:multiply;
+  }
+  .av.tl{ width:40px; height:40px; border-radius:13px; }
   .bday-body{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:1px; }
 
   .bday-name{
@@ -1114,28 +1122,46 @@
     line-height:1.5;
   }
 
-  .emoji-grid{
+  .sticker-grid{
     display:grid;
-    grid-template-columns:repeat(9,1fr);
-    gap:4px;
+    grid-template-columns:repeat(5,1fr);
+    gap:6px;
   }
 
-  .emoji-cell{
-    aspect-ratio:1;
-    display:grid;
-    place-items:center;
-    border-radius:10px;
-    border:1px solid transparent;
-    background:var(--line-soft);
-    font-size:16px;
-    line-height:1;
+  .sticker-cell{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:2px;
+    padding:6px 2px 7px;
+    border-radius:14px;
+    border:1px solid var(--line-soft);
+    background:#FDFAF4;
+    color:var(--ink-2);
+    font-family:var(--font);
+    font-size:10px;
+    line-height:1.2;
     cursor:pointer;
-    padding:0;
+    transition:transform .14s ease, background .14s ease, border-color .14s ease;
   }
-  .emoji-cell.on{
+
+  .sticker-cell img{
+    display:block;
+    width:100%;
+    max-width:46px;
+    height:auto;
+    aspect-ratio:1;
+    object-fit:contain;
+    mix-blend-mode:multiply;
+    pointer-events:none;
+  }
+
+  .sticker-cell.on{
     background:var(--butter);
     border-color:#EFDCB6;
-    transform:scale(1.04);
+    color:#8A6A3E;
+    box-shadow:0 0 0 1px rgba(239,220,182,.9);
+    transform:translateY(-1px);
   }
 
   .form-error{
@@ -1457,8 +1483,8 @@
     </div>
 
     <div class="field">
-      <span class="label">스티커</span>
-      <div class="emoji-grid" id="emojiGrid"></div>
+      <span class="label">캐릭터 스티커</span>
+      <div class="sticker-grid" id="stickerGrid"></div>
     </div>
 
     <div class="field">
@@ -1550,6 +1576,16 @@
     try { window.__ddErrors.push(String(e.message || e)); } catch (err) {}
   });
 
+  /* 스티커 이미지를 못 불러오면 조용히 대체 이미지로 바꾼다 */
+  document.addEventListener('error', function (e) {
+    var t = e.target;
+    if (!t || !t.tagName || t.tagName.toUpperCase() !== 'IMG') return;
+    var fb = t.getAttribute('data-fallback');
+    if (!fb || t.__fbDone) return;
+    t.__fbDone = true;
+    t.src = fb;
+  }, true);
+
   /* =========================================================
      음력 달력 데이터 (한국천문연구원 기준 / 2023~2049)
      [월, 윤달여부, 그 달 1일의 양력(YYYYMMDD), 그 달 일수]
@@ -1561,12 +1597,38 @@
   var MS_DAY = 86400000;
   var WEEKDAY = ['일', '월', '화', '수', '목', '금', '토'];
   var CATS = ['가족', '친구', '기타'];
-  var EMOJIS = ['👧🏻', '🌷', '🎂', '🧸', '🐰', '🍓', '🐻', '🌸', '🐣', '🍑', '🦋', '🐶', '🐱', '⭐', '🍀', '🎈', '🍰', '🐥'];
   var RELS = ['나', '딸', '아들', '남편', '아내', '엄마', '아빠', '언니', '오빠', '친구'];
 
+  /* =========================================================
+     캐릭터 스티커 (오일파스텔 손그림 5종)
+     ========================================================= */
+  var STICKERS = [
+    { id: 'puppy', label: '강아지', emoji: '🐶' },
+    { id: 'bear',  label: '곰돌이', emoji: '🧸' },
+    { id: 'bunny', label: '토끼',   emoji: '🐰' },
+    { id: 'cat',   label: '고양이', emoji: '🐱' },
+    { id: 'cake',  label: '케이크', emoji: '🎂' }
+  ];
+  var STICKER_IDS = ['puppy', 'bear', 'bunny', 'cat', 'cake'];
+  var HERO_ART = './assets/hero-character.png';
+  var STICKER_SRC = {};
+  for (var sk = 0; sk < STICKER_IDS.length; sk++) {
+    STICKER_SRC[STICKER_IDS[sk]] = './assets/sticker-' + STICKER_IDS[sk] + '.png';
+  }
+
+  /* 예전 이모지 데이터를 가장 비슷한 캐릭터로 옮긴다 */
+  var EMOJI_STICKER = {
+    '👧🏻': 'bunny', '👧': 'bunny', '🐰': 'bunny', '🐇': 'bunny', '🌸': 'bunny', '🌷': 'bunny',
+    '🍓': 'bunny', '🎀': 'bunny',
+    '🧸': 'bear', '🐻': 'bear', '🍯': 'bear',
+    '🐶': 'puppy', '🐕': 'puppy', '🍀': 'puppy',
+    '🐱': 'cat', '🐈': 'cat', '🍑': 'cat', '🦋': 'cat',
+    '🎂': 'cake', '🍰': 'cake', '🎈': 'cake', '🐣': 'cake', '🐥': 'cake', '⭐': 'cake'
+  };
+
   var DEFAULT_PEOPLE = [
-    { name: '수아', relation: '딸', category: '가족', emoji: '👧🏻', month: 9, day: 19, lunar: false, memo: '우리 수아 생일 🎂' },
-    { name: '다영', relation: '나', category: '가족', emoji: '🌷', month: 5, day: 12, lunar: false, memo: '내 생일 선물 위시리스트 적기' }
+    { name: '수아', relation: '딸', category: '가족', emoji: '🐰', sticker: 'bunny', month: 9, day: 19, lunar: false, memo: '우리 수아 생일 🎂' },
+    { name: '다영', relation: '나', category: '가족', emoji: '🎂', sticker: 'cake', month: 5, day: 12, lunar: false, memo: '내 생일 선물 위시리스트 적기' }
   ];
 
   /* ---------------- 작은 도우미 ---------------- */
@@ -1580,6 +1642,53 @@
       if (c === '"') return '&quot;';
       return '&#39;';
     });
+  }
+
+  /* ---------------- 캐릭터 스티커 도우미 ---------------- */
+  function isStickerId(v) {
+    return STICKER_IDS.indexOf(String(v == null ? '' : v)) !== -1;
+  }
+
+  function hashSticker(name) {
+    var s = String(name == null ? '' : name);
+    var h = 7;
+    for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 100003;
+    return STICKER_IDS[h % STICKER_IDS.length];
+  }
+
+  /* 고른 스티커 → 예전 이모지 → 이름 해시 순서로 기본값을 정한다 */
+  function pickSticker(sticker, emoji, name) {
+    if (isStickerId(sticker)) return String(sticker);
+    var key = String(emoji == null ? '' : emoji);
+    if (EMOJI_STICKER[key]) return EMOJI_STICKER[key];
+    return hashSticker(name);
+  }
+
+  function stickerOf(p) {
+    if (!p) return 'cake';
+    return pickSticker(p.sticker, p.emoji, p.name);
+  }
+
+  function stickerSrc(id) {
+    return STICKER_SRC[isStickerId(id) ? String(id) : 'cake'];
+  }
+
+  function stickerEmoji(id) {
+    for (var i = 0; i < STICKERS.length; i++) {
+      if (STICKERS[i].id === id) return STICKERS[i].emoji;
+    }
+    return '🎂';
+  }
+
+  function stickerLabel(id) {
+    for (var i = 0; i < STICKERS.length; i++) {
+      if (STICKERS[i].id === id) return STICKERS[i].label;
+    }
+    return '케이크';
+  }
+
+  function avHTML(p, extra) {
+    return '<span class="av t' + toneOf(p) + (extra ? ' ' + extra : '') + '"><img src="' + stickerSrc(stickerOf(p)) + '" alt="" width="96" height="96" data-fallback="' + stickerSrc('cake') + '"></span>';
   }
 
   function startOfDay(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
@@ -1714,12 +1823,14 @@
     if (!(month >= 1 && month <= 12)) return null;
     if (!(day >= 1 && day <= 31)) return null;
     var cat = CATS.indexOf(raw.category) !== -1 ? raw.category : guessCategory(raw.relation);
+    var emoji = String(raw.emoji == null || raw.emoji === '' ? '🎂' : raw.emoji);
     return {
       id: raw.id ? String(raw.id) : makeId(),
       name: name,
       relation: String(raw.relation == null ? '' : raw.relation).trim(),
       category: cat,
-      emoji: String(raw.emoji == null || raw.emoji === '' ? '🎂' : raw.emoji),
+      emoji: emoji,
+      sticker: pickSticker(raw.sticker, raw.emoji, name),
       month: month,
       day: day,
       lunar: raw.lunar === true,
@@ -1878,8 +1989,9 @@
   var deleteId = null;
   var cardPerson = null;
   var cardOcc = null;
+  var cardArt = null;
   var formLunar = false;
-  var formEmoji = '🎂';
+  var formSticker = 'cake';
   var formCat = '가족';
   var toastTimer = null;
   var activeTab = 'home';
@@ -1951,7 +2063,7 @@
     html += '<p class="hero-name">' + esc(p.name) + (p.relation ? ' <span class="rel">' + esc(p.relation) + '</span>' : '') + '</p>';
     html += '<p class="hero-sub">' + esc(personSub(p, occ)) + '</p>';
     html += '</div>';
-    html += '<span class="hero-art"><img src="./assets/hero-character.png" alt="" width="208" height="208"></span>';
+    html += '<span class="hero-art"><img src="' + stickerSrc(stickerOf(p)) + '" alt="" width="208" height="208" data-fallback="' + HERO_ART + '"></span>';
     html += '</div>';
     html += '<div class="hero-dday-row"><div class="hero-dday">';
     if (isToday) {
@@ -1992,7 +2104,7 @@
 
     var html = '';
     html += '<button type="button" class="bday" data-act="menu" data-id="' + esc(p.id) + '">';
-    html += '<span class="av t' + toneOf(p) + '">' + esc(p.emoji) + '</span>';
+    html += avHTML(p);
     html += '<span class="bday-body">';
     html += '<span class="bday-name"><span class="nm">' + esc(p.name) + '</span>';
     html += '<span class="badge" data-cat="' + esc(p.category) + '">' + esc(p.category) + '</span></span>';
@@ -2080,7 +2192,7 @@
 
     var html = '';
     html += '<div class="detail-row" data-act="menu" data-id="' + esc(p.id) + '" role="button" tabindex="0">';
-    html += '<span class="av t' + toneOf(p) + '">' + esc(p.emoji) + '</span>';
+    html += avHTML(p);
     html += '<span class="rb"><span class="rn"><span class="nm">' + esc(p.name) + '</span><span class="badge" data-cat="' + esc(p.category) + '">' + esc(p.category) + '</span></span>';
     html += '<span class="rm">' + esc(p.lunar ? ('음력 ' + p.month + '·' + p.day + ' · 양력 ' + fmtShort(item.date)) : fmtFull(item.date)) + '</span></span>';
     html += '<span class="' + chip + '">' + esc(ddayChip(left)) + '</span>';
@@ -2181,7 +2293,7 @@
       if (isNext) markedNext = true;
 
       html += '<div class="tl-item' + (isNext ? ' is-next' : '') + '" data-act="menu" data-id="' + esc(p.id) + '" role="button" tabindex="0">';
-      html += '<div class="tl-date"><span class="d">' + d.getDate() + '</span><span class="w">' + WEEKDAY[d.getDay()] + '</span></div>';
+      html += avHTML(p, 'tl');
       html += '<div class="tl-body"><p class="tl-name"><span class="nm">' + esc(p.name) + '</span>';
       html += '<span class="badge" data-cat="' + esc(p.category) + '">' + esc(p.category) + '</span></p>';
       html += '<p class="tl-meta">' + esc(p.lunar ? ('음력 ' + p.month + '·' + p.day + ' → 양력 ' + fmtMd(d)) : fmtMdWd(d)) + (p.relation ? ' · ' + esc(p.relation) : '') + '</p></div>';
@@ -2250,12 +2362,17 @@
     daySel.innerHTML = dOptions;
   }
 
-  function renderEmojiGrid() {
+  function renderStickerGrid() {
     var html = '';
-    for (var i = 0; i < EMOJIS.length; i++) {
-      html += '<button type="button" class="emoji-cell' + (EMOJIS[i] === formEmoji ? ' on' : '') + '" data-emoji="' + esc(EMOJIS[i]) + '">' + EMOJIS[i] + '</button>';
+    for (var i = 0; i < STICKERS.length; i++) {
+      var s = STICKERS[i];
+      var on = s.id === formSticker;
+      html += '<button type="button" class="sticker-cell' + (on ? ' on' : '') + '" data-sticker="' + esc(s.id) + '" aria-pressed="' + (on ? 'true' : 'false') + '" aria-label="' + esc(s.label) + ' 스티커">';
+      html += '<img src="' + stickerSrc(s.id) + '" alt="" width="96" height="96" data-fallback="' + stickerSrc('cake') + '">';
+      html += '<span>' + esc(s.label) + '</span>';
+      html += '</button>';
     }
-    $('emojiGrid').innerHTML = html;
+    $('stickerGrid').innerHTML = html;
   }
 
   function renderRelChips() {
@@ -2328,7 +2445,8 @@
       name: name || '이름 없음',
       relation: $('fRel').value.trim(),
       category: formCat,
-      emoji: formEmoji,
+      emoji: stickerEmoji(formSticker),
+      sticker: formSticker,
       month: month,
       day: day,
       lunar: formLunar,
@@ -2338,7 +2456,7 @@
 
   function openEditor(person) {
     editingId = person ? person.id : null;
-    formEmoji = person && person.emoji ? person.emoji : '🎂';
+    formSticker = person ? stickerOf(person) : 'cake';
     formCat = person && person.category ? person.category : '가족';
     $('editorTitle').textContent = person ? '생일 수정' : '생일 추가';
     $('fName').value = person ? person.name : '';
@@ -2365,7 +2483,7 @@
     $('fDay').value = String(dayValue);
 
     renderCatChips();
-    renderEmojiGrid();
+    renderStickerGrid();
     renderRelChips();
     updatePreview();
     openBackdrop($('editorBackdrop'));
@@ -2395,7 +2513,8 @@
       name: name,
       relation: $('fRel').value.trim(),
       category: formCat,
-      emoji: formEmoji,
+      emoji: stickerEmoji(formSticker),
+      sticker: formSticker,
       month: month,
       day: day,
       lunar: formLunar,
@@ -2514,7 +2633,7 @@
     return lines;
   }
 
-  function drawCard(canvas, person, occ) {
+  function drawCard(canvas, person, occ, art) {
     var W = 1080;
     var H = 1350;
     canvas.width = W;
@@ -2563,12 +2682,28 @@
     /* 상단 라벨 */
     ctx.fillStyle = '#A08468';
     ctx.font = '38px ' + FONT;
-    ctx.fillText('HAPPY  BIRTHDAY', W / 2, 200);
+    ctx.fillText('HAPPY  BIRTHDAY', W / 2, 196);
 
-    /* 이모지 */
-    ctx.font = '168px "Apple Color Emoji","Noto Color Emoji","Segoe UI Emoji",sans-serif';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(person.emoji || '🎂', W / 2, 400);
+    /* 캐릭터 스티커 (오일파스텔 손그림) */
+    var artDrawn = false;
+    if (art) {
+      try {
+        ctx.save();
+        ctx.globalCompositeOperation = 'multiply';
+        ctx.drawImage(art, W / 2 - 184, 236, 368, 368);
+        ctx.restore();
+        artDrawn = true;
+      } catch (e) {
+        try { ctx.restore(); } catch (e2) {}
+        artDrawn = false;
+      }
+    }
+    if (!artDrawn) {
+      ctx.font = '168px "Apple Color Emoji","Noto Color Emoji","Segoe UI Emoji",sans-serif';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(stickerEmoji(stickerOf(person)), W / 2, 418);
+      ctx.textBaseline = 'alphabetic';
+    }
 
     /* 이름 */
     ctx.textBaseline = 'alphabetic';
@@ -2579,19 +2714,19 @@
       ctx.font = nameSize + 'px ' + FONT;
     }
     ctx.fillStyle = '#3E322C';
-    ctx.fillText(person.name, W / 2, 615);
+    ctx.fillText(person.name, W / 2, 694);
 
     /* 관계 */
     if (person.relation) {
       ctx.font = '40px ' + FONT;
       ctx.fillStyle = '#8A7566';
-      ctx.fillText(person.relation, W / 2, 672);
+      ctx.fillText(person.relation, W / 2, 748);
     }
 
     /* 날짜 */
     ctx.font = '36px ' + FONT;
     ctx.fillStyle = '#7A6A60';
-    ctx.fillText(fmtFull(occ.date), W / 2, 752);
+    ctx.fillText(fmtFull(occ.date), W / 2, 816);
 
     /* D-day 알약 */
     var pillText = isToday ? '오늘이에요!' : ('D-' + left);
@@ -2600,7 +2735,7 @@
     var pillW = textW + 92;
     var pillH = 94;
     var pillX = (W - pillW) / 2;
-    var pillY = 802;
+    var pillY = 856;
     ctx.fillStyle = isToday ? '#F2B7B7' : '#FFF3C9';
     roundRect(ctx, pillX, pillY, pillW, pillH, pillH / 2);
     ctx.fill();
@@ -2618,7 +2753,7 @@
       ctx.font = '32px ' + FONT;
       var lines = wrapLines(ctx, person.memo, 700, 2);
       var boxH = 58 + lines.length * 44;
-      var boxY = 972;
+      var boxY = 992;
       ctx.fillStyle = 'rgba(255,253,248,0.95)';
       roundRect(ctx, 170, boxY, W - 340, boxH, 32);
       ctx.fill();
@@ -2638,6 +2773,40 @@
     ctx.fillText('🍰  with love  🍰', W / 2, H - 100);
   }
 
+  /* ---------------- 스티커 이미지 불러오기 ---------------- */
+  var stickerArtCache = {};
+
+  /* 항상 콜백을 부른다: 성공하면 HTMLImageElement, 실패하면 null */
+  function loadStickerArt(id, cb) {
+    var key = isStickerId(id) ? String(id) : 'cake';
+    var hit = stickerArtCache[key];
+
+    if (hit && hit.done) { cb(hit.img); return; }
+    if (hit && hit.waiters) { hit.waiters.push(cb); return; }
+
+    var img = new Image();
+    var entry = { done: false, img: null, waiters: [cb] };
+    stickerArtCache[key] = entry;
+
+    function finish(ok) {
+      if (entry.done) return;
+      entry.done = true;
+      entry.img = ok ? img : null;
+      var list = entry.waiters || [];
+      entry.waiters = null;
+      for (var i = 0; i < list.length; i++) {
+        try { list[i](entry.img); } catch (e) {}
+      }
+    }
+
+    img.onload = function () { finish(true); };
+    img.onerror = function () { finish(false); };
+    img.src = stickerSrc(key);
+
+    if (img.complete && img.naturalWidth) finish(true);
+    setTimeout(function () { finish(false); }, 5000);
+  }
+
   function openCard(id) {
     var p = findPerson(id);
     if (!p) return;
@@ -2654,10 +2823,16 @@
     var canvas = document.createElement('canvas');
     canvas.setAttribute('aria-label', p.name + ' 생일 축하 카드');
     holder.appendChild(canvas);
-    drawCard(canvas, p, occ);
 
-    whenFontReady(function () {
-      drawCard(canvas, p, occ);
+    /* 스티커를 불러오는 동안에도 미리 한 번 그려 둔다 */
+    var cachedArt = stickerArtCache[stickerOf(p)];
+    drawCard(canvas, p, occ, cachedArt && cachedArt.done && cachedArt.img ? cachedArt.img : null);
+
+    loadStickerArt(stickerOf(p), function (img) {
+      cardArt = img;
+      whenFontReady(function () {
+        drawCard(canvas, p, occ, cardArt);
+      });
     });
 
     openBackdrop($('cardBackdrop'));
@@ -2667,9 +2842,13 @@
   function savePng() {
     var canvas = $('cardPreview').querySelector('canvas');
     if (!canvas || !cardPerson) return;
-    whenFontReady(function () {
-      drawCard(canvas, cardPerson, cardOcc);
-      exportPng(canvas, cardPerson.name + '_생일카드.png');
+    var person = cardPerson;
+    var occ = cardOcc;
+    loadStickerArt(stickerOf(person), function (img) {
+      whenFontReady(function () {
+        drawCard(canvas, person, occ, img);
+        exportPng(canvas, person.name + '_생일카드.png');
+      });
     });
   }
 
@@ -3074,12 +3253,11 @@
   $('fDay').addEventListener('change', updatePreview);
   $('fName').addEventListener('input', updatePreview);
 
-  $('emojiGrid').addEventListener('click', function (e) {
-    var btn = e.target.closest ? e.target.closest('[data-emoji]') : null;
+  $('stickerGrid').addEventListener('click', function (e) {
+    var btn = e.target.closest ? e.target.closest('[data-sticker]') : null;
     if (!btn) return;
-    formEmoji = btn.getAttribute('data-emoji');
-    var cells = $('emojiGrid').querySelectorAll('.emoji-cell');
-    for (var i = 0; i < cells.length; i++) cells[i].classList.toggle('on', cells[i] === btn);
+    formSticker = btn.getAttribute('data-sticker');
+    renderStickerGrid();
   });
 
   $('relChips').addEventListener('click', function (e) {
@@ -3140,8 +3318,12 @@
   }
 
   window.__dd = {
-    version: '2.0',
+    version: '3.0',
     people: function () { return people; },
+    stickerOf: function (p) { return stickerOf(p); },
+    stickerSrc: stickerSrc,
+    stickers: STICKER_IDS.slice(),
+    openCard: openCard,
     nextOccurrence: nextOccurrence,
     occurrencesForSolarYear: occurrencesForSolarYear,
     lunarToSolar: lunarToSolar,
