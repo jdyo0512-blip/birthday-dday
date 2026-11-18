@@ -1702,9 +1702,34 @@
   };
 
   var DEFAULT_PEOPLE = [
-    { name: '수아', relation: '딸', category: '가족', emoji: '🐰', sticker: 'bunny', month: 9, day: 19, lunar: false, memo: '우리 수아 생일 🎂' },
-    { name: '다영', relation: '나', category: '가족', emoji: '🎂', sticker: 'cake', month: 5, day: 12, lunar: false, memo: '내 생일 선물 위시리스트 적기' }
+    { id: 'sua',  name: '수아', relation: '딸', category: '가족', emoji: '🐰', sticker: 'bunny', cardBg: 'cream', month: 9, day: 19, lunar: false, memo: '우리 수아 생일 🎂' },
+    { id: 'dayeong', name: '다영', relation: '나', category: '가족', emoji: '🎂', sticker: 'cake', cardBg: 'cream', month: 5, day: 12, lunar: false, memo: '내 생일 선물 위시리스트 적기' },
+
+    /* 네이버 캘린더(jdyo0512)에서 옮긴 생일 17건 — 전부 양력 · 매년 반복 */
+    { id: 'nv-ran',         name: '란',       relation: '친구', category: '친구', emoji: '🐣', sticker: 'chick',    cardBg: 'cream',         month: 4,  day: 20, lunar: false, memo: '' },
+    { id: 'nv-hyeongjeong', name: '현정',     relation: '친구', category: '친구', emoji: '🧸', sticker: 'bear',     cardBg: 'green-star',    month: 4,  day: 23, lunar: false, memo: '' },
+    { id: 'nv-saerom',      name: '새롬',     relation: '친구', category: '친구', emoji: '🐱', sticker: 'cat',      cardBg: 'blue-star',     month: 4,  day: 28, lunar: false, memo: '' },
+    { id: 'nv-eunbi',       name: '은비언니', relation: '언니', category: '기타', emoji: '🐶', sticker: 'puppy',    cardBg: 'gingham',       month: 5,  day: 3,  lunar: false, memo: '' },
+    { id: 'nv-hyeonjin',    name: '현진',     relation: '친구', category: '친구', emoji: '🐿️', sticker: 'squirrel', cardBg: 'daisy',         month: 5,  day: 4,  lunar: false, memo: '' },
+    { id: 'nv-amso',        name: '암소',     relation: '친구', category: '친구', emoji: '🐼', sticker: 'panda',    cardBg: 'butter-stripe', month: 5,  day: 11, lunar: false, memo: '' },
+    { id: 'nv-suyeong',     name: '수영',     relation: '친구', category: '친구', emoji: '🎈', sticker: 'balloons', cardBg: 'cream',         month: 7,  day: 29, lunar: false, memo: '' },
+    { id: 'nv-seolhui',     name: '설희',     relation: '친구', category: '친구', emoji: '🎊', sticker: 'garland',  cardBg: 'green-star',    month: 8,  day: 11, lunar: false, memo: '' },
+    { id: 'nv-dain',        name: '다인',     relation: '친구', category: '친구', emoji: '🧁', sticker: 'cupcake',  cardBg: 'blue-star',     month: 9,  day: 2,  lunar: false, memo: '' },
+    { id: 'nv-bora',        name: '보라',     relation: '친구', category: '친구', emoji: '🐰', sticker: 'bunny',    cardBg: 'gingham',       month: 9,  day: 9,  lunar: false, memo: '' },
+    { id: 'nv-geonnyeong',  name: '건녕오빠', relation: '오빠', category: '기타', emoji: '🎁', sticker: 'gift',     cardBg: 'daisy',         month: 9,  day: 9,  lunar: false, memo: '' },
+    { id: 'nv-minju',       name: '민주',     relation: '친구', category: '친구', emoji: '🎂', sticker: 'cake',     cardBg: 'butter-stripe', month: 9,  day: 18, lunar: false, memo: '' },
+    { id: 'nv-yunhwa',      name: '윤화',     relation: '친구', category: '친구', emoji: '🎈', sticker: 'balloons', cardBg: 'cream',         month: 9,  day: 23, lunar: false, memo: '' },
+    { id: 'nv-mingji',      name: '밍지언니', relation: '언니', category: '기타', emoji: '🎊', sticker: 'garland',  cardBg: 'green-star',    month: 10, day: 26, lunar: false, memo: '' },
+    { id: 'nv-jinseon',     name: '진선언니', relation: '언니', category: '기타', emoji: '🧁', sticker: 'cupcake',  cardBg: 'blue-star',     month: 11, day: 3,  lunar: false, memo: '' },
+    { id: 'nv-yumi',        name: '유미',     relation: '친구', category: '친구', emoji: '🧸', sticker: 'bear',     cardBg: 'gingham',       month: 11, day: 17, lunar: false, memo: '' },
+    { id: 'nv-idasaengil',  name: '이다생일', relation: '친구', category: '친구', emoji: '🐶', sticker: 'puppy',    cardBg: 'daisy',         month: 11, day: 26, lunar: false, memo: '' }
   ];
+
+  /* DEFAULT_PEOPLE 중에서 '한 번만 채워 넣을' 항목 (네이버 캘린더 17건) */
+  var SEED_KEY = 'dday.seed.naver17.v1';
+  var SEED_IDS = ['nv-ran', 'nv-hyeongjeong', 'nv-saerom', 'nv-eunbi', 'nv-hyeonjin', 'nv-amso',
+    'nv-suyeong', 'nv-seolhui', 'nv-dain', 'nv-bora', 'nv-geonnyeong', 'nv-minju', 'nv-yunhwa',
+    'nv-mingji', 'nv-jinseon', 'nv-yumi', 'nv-idasaengil'];
 
   /* ---------------- 작은 도우미 ---------------- */
   function $(id) { return document.getElementById(id); }
@@ -1963,6 +1988,38 @@
     } catch (e) { return null; }
   }
 
+  /* 이미 저장된 생일이 있는 사용자에게도 새 기본 생일이 한 번은 보이도록,
+     저장된 목록에 없는 SEED_IDS 항목만 1회 합친다.
+     (사용자가 나중에 지운 항목이 되살아나지 않도록 플래그를 남긴다.) */
+  function seedNewDefaults() {
+    var already = false;
+    try { already = localStorage.getItem(SEED_KEY) === '1'; } catch (e) { already = false; }
+    if (already) return 0;
+
+    var byId = {}, byKey = {}, i;
+    for (i = 0; i < people.length; i++) {
+      byId[people[i].id] = true;
+      byKey[people[i].name + '|' + people[i].month + '|' + people[i].day + '|' + (people[i].lunar ? 'L' : 'S')] = true;
+    }
+
+    var defs = DEFAULT_PEOPLE.map(normalize).filter(Boolean);
+    var added = 0;
+    for (i = 0; i < defs.length; i++) {
+      var p = defs[i];
+      if (SEED_IDS.indexOf(p.id) === -1) continue;
+      var key = p.name + '|' + p.month + '|' + p.day + '|' + (p.lunar ? 'L' : 'S');
+      if (byId[p.id] || byKey[key]) continue;
+      byId[p.id] = true;
+      byKey[key] = true;
+      people.push(p);
+      added++;
+    }
+
+    try { localStorage.setItem(SEED_KEY, '1'); } catch (e) {}
+    if (added) saveAll();
+    return added;
+  }
+
   function loadAll() {
     var lists = [];
     var primary = readKey(STORE_KEY);
@@ -1977,6 +2034,7 @@
     if (!lists.length) {
       people = DEFAULT_PEOPLE.map(normalize).filter(Boolean);
       saveAll();
+      seedNewDefaults();
       return;
     }
 
@@ -1998,6 +2056,7 @@
     if (!merged.length) merged = DEFAULT_PEOPLE.map(normalize).filter(Boolean);
     people = merged;
     saveAll();
+    seedNewDefaults();
 
     /* 옛 키는 내용을 옮긴 뒤 정리 (같은 생일이 다시 살아나지 않도록) */
     for (i = 0; i < LEGACY_KEYS.length; i++) {
